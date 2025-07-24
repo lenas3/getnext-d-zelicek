@@ -12,14 +12,13 @@
 
 #include "get_next_line.h"
 
-size_t	ft_length(const char *str, char c)
+size_t	ft_len(char *str)
 {
 	size_t	i;
 
 	i = 0;
-	while (str[i] != '\0' && str[i] != c)
+	while (str[i] != '\0')
 		i++;
-	write(1, "length\n", 8);
 	return (i);
 }
 
@@ -31,16 +30,14 @@ char	*ft_join(char *s1, char *s2)
 
 	i = 0;
 	j = 0;
-	concat = malloc((ft_length(s1, '\0') + ft_length(s2, '\0') + 1) * sizeof(char));
-	if (!concat)
-		return (NULL);
+
 	if (!s1 && !s2)
 		return (NULL);
 	if(!s1)
 		return(ft_join(concat, s2));
 	if(!s2)
 		return(ft_join(concat, s1));
-	i = ft_length(s1, '\0');
+	i = ft_len(s1);
 	while (s2[j] != '\0')
 	{
 		concat[i] = s2[j];
@@ -48,7 +45,6 @@ char	*ft_join(char *s1, char *s2)
 		j++;
 	}
 	concat[i] = '\0';
-	write(1, "join\n", 6);
 	return (concat);
 }
 
@@ -69,7 +65,6 @@ char *ft_read(int fd, int buff_size, char *stack)
     buffer[bytes] = '\0';
     stack = ft_join(stack, buffer);
 	free (buffer); 
-	write(1, "read\n", 6);
     return (stack);
 }
 /*
@@ -80,61 +75,19 @@ geçici tampon kullanmadığım durumda stack için bellek ayrımam gerekir.
 ama okuma yapmadan ne kadar ayıracağımı bilemem.
 */
 
-char *ft_newstack(char *stack)
+char	*ft_strchr(const char *str, int a)
 {
-	int remainlen;
-	int linelen;
-	int i;
-	char *newstack;
+	size_t	i;
 
-	if(!stack)
-		return (NULL);
-	linelen = ft_length(stack, '\n');
-	remainlen = ft_length(stack, '\0');	
-	if (remainlen < linelen)
-	{
-		free(stack);
-		return(NULL);
-	}
-	newstack = malloc((remainlen - (linelen + 1) + 1) * sizeof(char));
-	if(!newstack)
-		return (NULL);
 	i = 0;
-	while(stack[linelen + 1 + i])
+	while (str[i] != '\0')
 	{
-		newstack[i] = stack[linelen + 1 + i];
+		if (str[i] == (char)a)
+			return ((char *)&str[i]);
 		i++;
 	}
-	newstack[i] = '\0';
-	free(stack);
-	write(1, "newstack\n", 10);
-	return(newstack);
+	if ((char)a == '\0')
+		return ((char *)&str[i]);
+	return (NULL);
 }
 
-char *ft_getline(char *stack)
-{
-	int i;
-
-	char *line;
-	i = 0;
-	line = malloc((ft_length(stack, '\n') + 1) * sizeof(char));
-	if(!line)
-		return (NULL);
-	while(stack[i])
-	{
-		if(stack[i] != '\n')
-		{
-			line[i] = stack[i];
-			i++;
-		}
-		else
-		{
-			line[i] = stack[i];
-			line[i++] = '\n';
-			line[i+2] = '\0';
-			return(line);
-		}
-	}
-	write(1, "line\n", 6);
-	return(NULL);
-}
